@@ -75,13 +75,12 @@ function initRenewalEmail(membershipObj) {
         `Script executed, an error may have occured or this was a test`
       );
     }
-  } else {
-    GmailApp.sendEmail(
-      DEV_EMAIL,
-      `${isDev ? '[Develop]' : '[Prod]'} GSRC Thank You Posts`,
-      `Script executed, ${actionText}`
-    );
   }
+  GmailApp.sendEmail(
+    DEV_EMAIL,
+    `${isDev ? '[Develop]' : '[Prod]'} GSRC Thank You Posts`,
+    `Script executed, ${actionText}`
+  );
 }
 
 /* Email Block Start */
