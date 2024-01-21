@@ -6,7 +6,7 @@ function init() {
   for (const summaryThread of label.getThreads()) {
     for (const message of summaryThread.getMessages()) {
       const plainMessage = message.getPlainBody();
-      const membershipArr = plainMessage.split('\r\n').filter(d => d.includes('#'));
+      const membershipArr = plainMessage.split('\r\n').filter(d => d.includes('#') & !d.includes('Phone'));
       for (const membership of membershipArr) {
         const [firstName, lastName] = membership.split(' ');
         if (!membershipObj[lastName]) {
@@ -60,6 +60,10 @@ function initRenewalEmail(membershipObj) {
     } else {
       hasNewMembers = false;
     }
+  }
+  if (isDev) {
+    // Do not send notification email
+    return;
   }
   const numberOfNewMembers = Object.keys(membershipObj).length;
   const actionText =
