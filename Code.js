@@ -8,7 +8,9 @@ function init() {
       const plainMessage = message.getPlainBody();
       const membershipArr = plainMessage.split('\r\n').filter(d => d.includes('#') & !d.includes('Phone'));
       for (const membership of membershipArr) {
-        const [firstName, lastName] = membership.split(' ');
+        const fullName = membership.split(' ');
+        const firstName = fullName.includes('Jr') ? fullName.at(0) + ' Jr' : fullName.at(0);
+        const lastName = fullName.at(-2);
         if (!membershipObj[lastName]) {
           membershipObj[lastName] = [];
         }
@@ -38,7 +40,8 @@ function initRenewalEmail(membershipObj) {
         .map(d => d.trim())
         .filter(d => d);
       // Since rewnewal, always last name is assumed from first member
-      const [, lastName] = renewedMemeber.split(' ');
+      const fullName = renewedMemeber.split(' ');
+      const lastName = fullName.at(-1);
       if (!membershipObj[lastName]) {
         // Membership summary has not yet arrived or error state
         continue;
@@ -67,7 +70,7 @@ function initRenewalEmail(membershipObj) {
   }
   const numberOfNewMembers = Object.keys(membershipObj).length;
   const actionText =
-    numberOfNewMembers === 0 ? 'there were no new members' : `thanked ${numberOfNewMembers} new members`;
+    numberOfNewMembers === 0 ? 'there were no memberships' : `thanked ${numberOfNewMembers} member(s)`;
   if (numberOfNewMembers > 0) {
     if (needsReview) {
       reviewDraft();
@@ -132,7 +135,8 @@ function getPostString(membersArr) {
   if (membersArr.length === 2) {
     const [firstPerson, secondPerson] = membersArr;
     // Chop off first person's last name
-    [, lastName] = firstPerson.name.split(' ');
+    const fullName = firstPerson.name.split(' ');
+    lastName = fullName.at(-1);
     const [firstPersonFirstName] = firstPerson.name.split(' ');
     const [secondPersonFirstName] = secondPerson.name.split(' ');
     membersString = `${firstPersonFirstName} and ${secondPersonFirstName} ${lastName}`;
@@ -140,7 +144,9 @@ function getPostString(membersArr) {
   }
   if (membersArr.length > 2) {
     membersArr.forEach((member, idx) => {
-      [firstName, lastName] = member.name.split(' ');
+      const fullName = member.name.split(' ');
+      firstName = fullName.includes('Jr') ? fullName.at(0) + ' Jr' : fullName.at(0);
+      lastName = fullName.at(-1);
       if (idx === membersArr.length - 1) {
         membersString += `and ${firstName} ${lastName}`;
         return;
